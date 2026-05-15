@@ -1,4 +1,4 @@
-package com.sivebo.ms_finanazas.dto.response;
+package com.sivebo.ms_finanzas.dto.response;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package com.sivebo.ms_finanazas;
+package com.sivebo.ms_finanzas;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
