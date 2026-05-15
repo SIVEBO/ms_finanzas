@@ -1,21 +1,38 @@
 package com.sivebo.ms_finanzas.model.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import java.math.BigDecimal;
 
-@Data
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "movimiento_caja")
 public class MovimientoCaja {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_movimiento")
     private Long idMovimiento;
 
-    @Column(name = "id_sesion", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id_sesion", nullable = false)
     private AperturaCierre sesion;
 
-    @Column(name = "tipo", nullable = false)
+    @Column(name = "tipo", nullable = false, length = 10)
     private String tipo;
 
     @Column(name = "monto", nullable = false)

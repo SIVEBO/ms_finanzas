@@ -6,20 +6,27 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "caja_sucursal")
 public class CajaSucursal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_caja")
     private Long idCaja;
 
     @Column(name = "id_sucursal", nullable = false)
     private Long idSucursal;
 
-    @Column(name = "estado_actual", nullable = false)
+    @Column(name = "estado_actual", nullable = false, length = 20)
     private String estadoActual;
 }
