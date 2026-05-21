@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AperturaCierreResponse {
+    
     private Long idSesion;
     private Long idCaja;
     private Long idUsuario;

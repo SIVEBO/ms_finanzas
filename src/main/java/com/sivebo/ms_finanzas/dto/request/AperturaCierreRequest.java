@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AperturaCierreRequest {
+    
     @NotNull(message = "El id de la caja es obligatorio")
     private Long idCaja;
 
