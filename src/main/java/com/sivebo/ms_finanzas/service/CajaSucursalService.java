@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
-import com.sivebo.ms_finanzas.repository.AperturaCierreRepository;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
-import com.sivebo.ms_finanzas.repository.MovimientoCajaRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class CajaSucursalService {
-
-    private final CajaSucursalRepository cajaSucursalRepository;
-    private final AperturaCierreRepository aperturaCierreRepository;
-    private final MovimientoCajaRepository movimientoCajaRepository;
-
 
     private final CajaSucursalRepository repository;
 
