@@ -1,7 +1,11 @@
 package com.sivebo.ms_finanzas.model.entity;
 
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +29,7 @@ public class CajaSucursal {
     @Column(name = "id_sucursal", nullable = false)
     private Long idSucursal;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado_actual", nullable = false, length = 20)
-    private String estadoActual;
+    private EstadoCaja estadoActual;
 }

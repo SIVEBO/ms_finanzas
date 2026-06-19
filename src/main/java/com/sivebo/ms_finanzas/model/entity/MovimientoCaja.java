@@ -2,8 +2,12 @@ package com.sivebo.ms_finanzas.model.entity;
 
 import java.math.BigDecimal;
 
+import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,12 +34,16 @@ public class MovimientoCaja {
     @JoinColumn(name = "id_sesion", nullable = false)
     private AperturaCierre sesion;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 10)
-    private String tipo;
+    private TipoMovimiento tipo;
 
     @Column(name = "monto", nullable = false)
     private BigDecimal monto;
 
     @Column(name = "id_referencia_vta")
     private Long idReferenciaVta;
+
+    @Column(name = "concepto")
+    private String concepto;
 }
