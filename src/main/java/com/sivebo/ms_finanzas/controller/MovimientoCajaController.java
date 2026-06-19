@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_finanzas.dto.request.MovimientoCajaRequest;
 import com.sivebo.ms_finanzas.dto.response.MovimientoCajaResponse;
+import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
 import com.sivebo.ms_finanzas.service.MovimientoCajaService;
 
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class MovimientoCajaController {
     }
 
     @GetMapping("/sesion/{idSesion}/tipo")
-    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesionYTipo(@PathVariable Long idSesion, @RequestParam String tipo) {
+    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesionYTipo(@PathVariable Long idSesion, @RequestParam TipoMovimiento tipo) {
         return ResponseEntity.ok(service.listarPorSesionYTipo(idSesion, tipo));
     }
 }

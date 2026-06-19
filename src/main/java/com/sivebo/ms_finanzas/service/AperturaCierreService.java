@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_finanzas.dto.request.AperturaCierreRequest;
 import com.sivebo.ms_finanzas.dto.response.AperturaCierreResponse;
+import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
+import com.sivebo.ms_finanzas.exception.ReglaNegocioException;
 import com.sivebo.ms_finanzas.model.entity.AperturaCierre;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
 import com.sivebo.ms_finanzas.repository.AperturaCierreRepository;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
 
@@ -28,8 +31,13 @@ public class AperturaCierreService {
     public AperturaCierreResponse abrirCaja(AperturaCierreRequest request) {
         log.info("Abriendo caja id: {}", request.getIdCaja());
         CajaSucursal caja = cajaRepository.findById(request.getIdCaja())
-                .orElseThrow(() -> new RuntimeException("Caja no encontrada"));
-        caja.setEstadoActual("ABIERTA");
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada"));
+
+        if (caja.getEstadoActual() == EstadoCaja.ABIERTA) {
+            throw new ReglaNegocioException("La caja ya se encuentra abierta");
+        }
+
+        caja.setEstadoActual(EstadoCaja.ABIERTA);
         cajaRepository.save(caja);
 
         AperturaCierre apertura = new AperturaCierre();
@@ -43,32 +51,37 @@ public class AperturaCierreService {
     public AperturaCierreResponse cerrarCaja(Long idSesion, BigDecimal montoCierre) {
         log.info("Cerrando sesión id: {}", idSesion);
         AperturaCierre sesion = repository.findById(idSesion)
-                .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
+
+        if (sesion.getCaja().getEstadoActual() == EstadoCaja.CERRADA) {
+            throw new ReglaNegocioException("La caja ya se encuentra cerrada");
+        }
+        if (sesion.getFechaHoraCierre() != null) {
+            throw new ReglaNegocioException("Esta sesión ya fue cerrada anteriormente");
+        }
+
         sesion.setMontoCierre(montoCierre);
         sesion.setFechaHoraCierre(LocalDateTime.now());
-        sesion.getCaja().setEstadoActual("CERRADA");
+        sesion.getCaja().setEstadoActual(EstadoCaja.CERRADA);
         cajaRepository.save(sesion.getCaja());
         return toResponse(repository.save(sesion));
     }
 
-    
     public AperturaCierreResponse obtenerPorId(Long id) {
         log.info("Buscando sesión id: {}", id);
         return toResponse(repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sesión no encontrada")));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada")));
     }
 
-    
     public List<AperturaCierreResponse> listarPorCaja(Long idCaja) {
         log.info("Listando sesiones de caja id: {}", idCaja);
         return repository.findByCajaIdCaja(idCaja).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    
     public AperturaCierreResponse obtenerSesionAbierta(Long idCaja) {
         log.info("Buscando sesión abierta de caja id: {}", idCaja);
         return toResponse(repository.findByCajaIdCajaAndFechaHoraCierreIsNull(idCaja)
-                .orElseThrow(() -> new RuntimeException("No hay sesión abierta para esta caja")));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No hay sesión abierta para esta caja")));
     }
 
     private AperturaCierreResponse toResponse(AperturaCierre a) {

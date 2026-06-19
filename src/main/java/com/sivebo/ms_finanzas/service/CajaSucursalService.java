@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
+import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,50 +28,34 @@ public class CajaSucursalService {
         log.info("Creando caja para sucursal id: {}", request.getIdSucursal());
         CajaSucursal caja = new CajaSucursal();
         caja.setIdSucursal(request.getIdSucursal());
-        caja.setEstadoActual(request.getEstadoActual());
+        caja.setEstadoActual(EstadoCaja.CERRADA);
         return toResponse(repository.save(caja));
     }
 
-    
     public CajaSucursalResponse obtenerPorId(Long id) {
         log.info("Buscando caja id: {}", id);
         CajaSucursal caja = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Caja no encontrada con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada con id: " + id));
         return toResponse(caja);
     }
 
-    
     public CajaSucursalResponse obtenerPorSucursal(Long idSucursal) {
         log.info("Buscando caja de sucursal id: {}", idSucursal);
         CajaSucursal caja = repository.findByIdSucursal(idSucursal)
-                .orElseThrow(() -> new RuntimeException("Caja no encontrada para sucursal: " + idSucursal));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada para sucursal: " + idSucursal));
         return toResponse(caja);
     }
 
-    
     public List<CajaSucursalResponse> listarTodas() {
         log.info("Listando todas las cajas");
         return repository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
-    }
-
-    
-    public CajaSucursalResponse actualizarEstado(Long id, String nuevoEstado) {
-        log.info("Actualizando estado de caja id: {} a {}", id, nuevoEstado);
-        CajaSucursal caja = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Caja no encontrada con id: " + id));
-        caja.setEstadoActual(nuevoEstado);
-        return toResponse(repository.save(caja));
     }
 
     private CajaSucursalResponse toResponse(CajaSucursal caja) {
         CajaSucursalResponse response = new CajaSucursalResponse();
         response.setIdCaja(caja.getIdCaja());
         response.setIdSucursal(caja.getIdSucursal());
-        response.setEstadoActual(caja.getEstadoActual());
+        response.setEstadoActual(caja.getEstadoActual().name());
         return response;
     }
-
-    
-
-
 }

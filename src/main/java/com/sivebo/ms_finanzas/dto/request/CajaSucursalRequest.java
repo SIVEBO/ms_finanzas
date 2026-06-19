@@ -12,7 +12,4 @@ public class CajaSucursalRequest {
 
     @NotNull(message = "El id de la sucursal es obligatorio")
     private Long idSucursal;
-
-    @NotNull(message = "El estado actual es obligatorio")
-    private String estadoActual;
 }
