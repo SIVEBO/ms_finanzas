@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sivebo</groupId>
-	<artifactId>ms_finanazas</artifactId>
+	<artifactId>ms_finanzas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ms_finanazas</name>
+	<name>ms_finanzas</name>
 	<description/>
 	<url/>
 	<licenses>
