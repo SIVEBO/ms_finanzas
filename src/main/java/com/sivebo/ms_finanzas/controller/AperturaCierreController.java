@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/aperturas")
+@RequestMapping("api/v1/aperturas")
 @RequiredArgsConstructor
 public class AperturaCierreController {
 
