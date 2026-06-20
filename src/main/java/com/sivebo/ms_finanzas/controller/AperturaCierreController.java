@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_finanzas.dto.request.AperturaCierreRequest;
 import com.sivebo.ms_finanzas.dto.response.AperturaCierreResponse;
+import com.sivebo.ms_finanzas.dto.response.ReporteCierreResponse;
 import com.sivebo.ms_finanzas.service.AperturaCierreService;
 
 import jakarta.validation.Valid;
@@ -51,5 +52,10 @@ public class AperturaCierreController {
     @GetMapping("/caja/{idCaja}/abierta")
     public ResponseEntity<AperturaCierreResponse> obtenerSesionAbierta(@PathVariable Long idCaja) {
         return ResponseEntity.ok(service.obtenerSesionAbierta(idCaja));
+    }
+
+    @GetMapping("/{idSesion}/reporte-cierre")
+    public ResponseEntity<ReporteCierreResponse> reporteCierre(@PathVariable Long idSesion) {
+        return ResponseEntity.ok(service.generarReporteCierre(idSesion));
     }
 }

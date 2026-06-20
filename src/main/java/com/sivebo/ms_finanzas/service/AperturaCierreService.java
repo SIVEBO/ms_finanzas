@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_finanzas.dto.request.AperturaCierreRequest;
 import com.sivebo.ms_finanzas.dto.response.AperturaCierreResponse;
+import com.sivebo.ms_finanzas.dto.response.ReporteCierreResponse;
 import com.sivebo.ms_finanzas.model.entity.AperturaCierre;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
+import com.sivebo.ms_finanzas.model.entity.MovimientoCaja;
 import com.sivebo.ms_finanzas.repository.AperturaCierreRepository;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
+import com.sivebo.ms_finanzas.repository.MovimientoCajaRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,7 @@ public class AperturaCierreService {
 
     private final AperturaCierreRepository repository;
     private final CajaSucursalRepository cajaRepository;
+    private final MovimientoCajaRepository movimientoRepository;
 
     public AperturaCierreResponse abrirCaja(AperturaCierreRequest request) {
         log.info("Abriendo caja id: {}", request.getIdCaja());
@@ -44,11 +48,30 @@ public class AperturaCierreService {
         log.info("Cerrando sesión id: {}", idSesion);
         AperturaCierre sesion = repository.findById(idSesion)
                 .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+
+        // RF-39: cuadre — compute expected balance from movimientos
+        List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
+        BigDecimal totalIngresos = movimientos.stream()
+                .filter(m -> "INGRESO".equals(m.getTipo()))
+                .map(MovimientoCaja::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalEgresos = movimientos.stream()
+                .filter(m -> "EGRESO".equals(m.getTipo()))
+                .map(MovimientoCaja::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal saldoCalculado = sesion.getMontoApertura().add(totalIngresos).subtract(totalEgresos);
+        BigDecimal diferencia = montoCierre.subtract(saldoCalculado);
+        log.info("Cuadre sesión {}: saldoCalculado={}, declarado={}, diferencia={}",
+                idSesion, saldoCalculado, montoCierre, diferencia);
+
         sesion.setMontoCierre(montoCierre);
         sesion.setFechaHoraCierre(LocalDateTime.now());
         sesion.getCaja().setEstadoActual("CERRADA");
         cajaRepository.save(sesion.getCaja());
-        return toResponse(repository.save(sesion));
+        AperturaCierreResponse r = toResponse(repository.save(sesion));
+        r.setSaldoCalculado(saldoCalculado);
+        r.setDiferenciaCuadre(diferencia);
+        return r;
     }
 
     
@@ -69,6 +92,41 @@ public class AperturaCierreService {
         log.info("Buscando sesión abierta de caja id: {}", idCaja);
         return toResponse(repository.findByCajaIdCajaAndFechaHoraCierreIsNull(idCaja)
                 .orElseThrow(() -> new RuntimeException("No hay sesión abierta para esta caja")));
+    }
+
+    // RF-40: reporte de cierre con cuadre
+    public ReporteCierreResponse generarReporteCierre(Long idSesion) {
+        log.info("Generando reporte de cierre para sesión id: {}", idSesion);
+        AperturaCierre sesion = repository.findById(idSesion)
+                .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+        if (sesion.getFechaHoraCierre() == null) {
+            throw new RuntimeException("La sesión " + idSesion + " aún está abierta");
+        }
+        List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
+        BigDecimal totalIngresos = movimientos.stream()
+                .filter(m -> "INGRESO".equals(m.getTipo()))
+                .map(MovimientoCaja::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalEgresos = movimientos.stream()
+                .filter(m -> "EGRESO".equals(m.getTipo()))
+                .map(MovimientoCaja::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal saldoCalculado = sesion.getMontoApertura().add(totalIngresos).subtract(totalEgresos);
+        BigDecimal diferencia = sesion.getMontoCierre().subtract(saldoCalculado);
+
+        ReporteCierreResponse r = new ReporteCierreResponse();
+        r.setIdSesion(sesion.getIdSesion());
+        r.setIdCaja(sesion.getCaja().getIdCaja());
+        r.setIdUsuario(sesion.getIdUsuario());
+        r.setFechaHoraApertura(sesion.getFechaHoraApertura());
+        r.setFechaHoraCierre(sesion.getFechaHoraCierre());
+        r.setMontoApertura(sesion.getMontoApertura());
+        r.setMontoCierre(sesion.getMontoCierre());
+        r.setTotalIngresos(totalIngresos);
+        r.setTotalEgresos(totalEgresos);
+        r.setSaldoCalculado(saldoCalculado);
+        r.setDiferenciaCuadre(diferencia);
+        return r;
     }
 
     private AperturaCierreResponse toResponse(AperturaCierre a) {
