@@ -17,9 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sivebo.ms_finanzas.dto.request.MovimientoCajaRequest;
 import com.sivebo.ms_finanzas.dto.response.MovimientoCajaResponse;
+import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
 import com.sivebo.ms_finanzas.model.entity.AperturaCierre;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
 import com.sivebo.ms_finanzas.model.entity.MovimientoCaja;
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
+import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
 import com.sivebo.ms_finanzas.repository.AperturaCierreRepository;
 import com.sivebo.ms_finanzas.repository.MovimientoCajaRepository;
 
@@ -31,20 +34,20 @@ class MovimientoCajaServiceTest {
 
     @InjectMocks MovimientoCajaService service;
 
-    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, "ABIERTA");
+    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, EstadoCaja.ABIERTA);
 
     private static final AperturaCierre SESION = new AperturaCierre(
             1L, CAJA, 50L, new BigDecimal("100000"), null,
             LocalDateTime.of(2026, 6, 1, 8, 0), null);
 
-    private MovimientoCaja buildMovimiento(Long id, String tipo, BigDecimal monto) {
+    private MovimientoCaja buildMovimiento(Long id, TipoMovimiento tipo, BigDecimal monto) {
         return new MovimientoCaja(id, SESION, tipo, monto, null);
     }
 
     @Test
     void registrar_sesionExiste_guardaYRetornaResponse() {
-        MovimientoCajaRequest request = new MovimientoCajaRequest(1L, "INGRESO", new BigDecimal("50000"), 101L);
-        MovimientoCaja guardado = new MovimientoCaja(1L, SESION, "INGRESO", new BigDecimal("50000"), 101L);
+        MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L);
+        MovimientoCaja guardado = new MovimientoCaja(1L, SESION, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L);
 
         when(aperturaCierreRepository.findById(1L)).thenReturn(Optional.of(SESION));
         when(repository.save(any(MovimientoCaja.class))).thenReturn(guardado);
@@ -59,19 +62,19 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void registrar_sesionNoExiste_lanzaRuntimeException() {
-        MovimientoCajaRequest request = new MovimientoCajaRequest(99L, "INGRESO", new BigDecimal("50000"), null);
+    void registrar_sesionNoExiste_lanzaRecursoNoEncontrado() {
+        MovimientoCajaRequest request = new MovimientoCajaRequest(99L, TipoMovimiento.INGRESO, new BigDecimal("50000"), null);
         when(aperturaCierreRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.registrar(request));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.registrar(request));
         verify(repository, never()).save(any());
     }
 
     @Test
     void listarPorSesion_retornaTodosLosMovimientos() {
         List<MovimientoCaja> movimientos = List.of(
-                buildMovimiento(1L, "INGRESO", new BigDecimal("50000")),
-                buildMovimiento(2L, "EGRESO", new BigDecimal("20000")));
+                buildMovimiento(1L, TipoMovimiento.INGRESO, new BigDecimal("50000")),
+                buildMovimiento(2L, TipoMovimiento.EGRESO, new BigDecimal("20000")));
         when(repository.findBySesionIdSesion(1L)).thenReturn(movimientos);
 
         List<MovimientoCajaResponse> result = service.listarPorSesion(1L);
@@ -84,11 +87,11 @@ class MovimientoCajaServiceTest {
     @Test
     void listarPorSesionYTipo_filtraPorTipoCorrectamente() {
         List<MovimientoCaja> ingresos = List.of(
-                buildMovimiento(1L, "INGRESO", new BigDecimal("50000")),
-                buildMovimiento(3L, "INGRESO", new BigDecimal("30000")));
-        when(repository.findBySesionIdSesionAndTipo(1L, "INGRESO")).thenReturn(ingresos);
+                buildMovimiento(1L, TipoMovimiento.INGRESO, new BigDecimal("50000")),
+                buildMovimiento(3L, TipoMovimiento.INGRESO, new BigDecimal("30000")));
+        when(repository.findBySesionIdSesionAndTipo(1L, TipoMovimiento.INGRESO)).thenReturn(ingresos);
 
-        List<MovimientoCajaResponse> result = service.listarPorSesionYTipo(1L, "INGRESO");
+        List<MovimientoCajaResponse> result = service.listarPorSesionYTipo(1L, TipoMovimiento.INGRESO);
 
         assertEquals(2, result.size());
         assertTrue(result.stream().allMatch(r -> "INGRESO".equals(r.getTipo())));

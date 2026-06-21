@@ -28,10 +28,11 @@ public class CajaSucursalService {
         log.info("Creando caja para sucursal id: {}", request.getIdSucursal());
         CajaSucursal caja = new CajaSucursal();
         caja.setIdSucursal(request.getIdSucursal());
-        caja.setEstadoActual(EstadoCaja.CERRADA);
+        caja.setEstadoActual(request.getEstadoActual());
         return toResponse(repository.save(caja));
     }
 
+    
     public CajaSucursalResponse obtenerPorId(Long id) {
         log.info("Buscando caja id: {}", id);
         CajaSucursal caja = repository.findById(id)
@@ -39,6 +40,7 @@ public class CajaSucursalService {
         return toResponse(caja);
     }
 
+    
     public CajaSucursalResponse obtenerPorSucursal(Long idSucursal) {
         log.info("Buscando caja de sucursal id: {}", idSucursal);
         CajaSucursal caja = repository.findByIdSucursal(idSucursal)
@@ -46,9 +48,19 @@ public class CajaSucursalService {
         return toResponse(caja);
     }
 
+    
     public List<CajaSucursalResponse> listarTodas() {
         log.info("Listando todas las cajas");
         return repository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    
+    public CajaSucursalResponse actualizarEstado(Long id, EstadoCaja nuevoEstado) {
+        log.info("Actualizando estado de caja id: {} a {}", id, nuevoEstado);
+        CajaSucursal caja = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada con id: " + id));
+        caja.setEstadoActual(nuevoEstado);
+        return toResponse(repository.save(caja));
     }
 
     private CajaSucursalResponse toResponse(CajaSucursal caja) {
@@ -58,4 +70,8 @@ public class CajaSucursalService {
         response.setEstadoActual(caja.getEstadoActual().name());
         return response;
     }
+
+    
+
+
 }

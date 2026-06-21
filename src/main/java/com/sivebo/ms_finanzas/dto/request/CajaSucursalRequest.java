@@ -1,5 +1,7 @@
 package com.sivebo.ms_finanzas.dto.request;
 
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,4 +14,7 @@ public class CajaSucursalRequest {
 
     @NotNull(message = "El id de la sucursal es obligatorio")
     private Long idSucursal;
+
+    @NotNull(message = "El estado actual es obligatorio")
+    private EstadoCaja estadoActual;
 }

@@ -43,7 +43,4 @@ public class MovimientoCaja {
 
     @Column(name = "id_referencia_vta")
     private Long idReferenciaVta;
-
-    @Column(name = "concepto")
-    private String concepto;
 }

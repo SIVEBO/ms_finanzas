@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimientoCajaRequest {
-
+    
     @NotNull(message = "El id de la sesión es obligatorio")
     private Long idSesion;
 
@@ -26,6 +26,4 @@ public class MovimientoCajaRequest {
     private BigDecimal monto;
 
     private Long idReferenciaVta;
-
-    private String concepto;
 }

@@ -5,14 +5,17 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
 import com.sivebo.ms_finanzas.service.CajaSucursalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,16 +70,13 @@ public class CajaSucursalController {
         return ResponseEntity.ok(service.obtenerPorSucursal(idSucursal));
     }
 
-<<<<<<< HEAD
-=======
     @Operation(summary = "Actualizar estado de caja")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Estado actualizado"),
         @ApiResponse(responseCode = "404", description = "Caja no encontrada")
     })
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<CajaSucursalResponse> actualizarEstado(@PathVariable Long id, @RequestParam String nuevoEstado) {
+    public ResponseEntity<CajaSucursalResponse> actualizarEstado(@PathVariable Long id, @RequestParam EstadoCaja nuevoEstado) {
         return ResponseEntity.ok(service.actualizarEstado(id, nuevoEstado));
     }
->>>>>>> refactor
 }

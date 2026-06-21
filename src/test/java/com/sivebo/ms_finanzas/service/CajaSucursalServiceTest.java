@@ -15,7 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
+import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
+import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,11 +27,11 @@ class CajaSucursalServiceTest {
 
     @InjectMocks CajaSucursalService service;
 
-    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, "CERRADA");
+    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, EstadoCaja.CERRADA);
 
     @Test
     void crear_requestValido_guardaYRetornaResponse() {
-        CajaSucursalRequest request = new CajaSucursalRequest(10L, "CERRADA");
+        CajaSucursalRequest request = new CajaSucursalRequest(10L, EstadoCaja.CERRADA);
         when(repository.save(any(CajaSucursal.class))).thenReturn(CAJA);
 
         CajaSucursalResponse result = service.crear(request);
@@ -51,10 +53,10 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void obtenerPorId_noExiste_lanzaRuntimeException() {
+    void obtenerPorId_noExiste_lanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.obtenerPorId(99L));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorId(99L));
     }
 
     @Test
@@ -68,15 +70,15 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void obtenerPorSucursal_noExiste_lanzaRuntimeException() {
+    void obtenerPorSucursal_noExiste_lanzaRecursoNoEncontrado() {
         when(repository.findByIdSucursal(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.obtenerPorSucursal(99L));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorSucursal(99L));
     }
 
     @Test
     void listarTodas_retornaTodasLasCajas() {
-        CajaSucursal caja2 = new CajaSucursal(2L, 20L, "ABIERTA");
+        CajaSucursal caja2 = new CajaSucursal(2L, 20L, EstadoCaja.ABIERTA);
         when(repository.findAll()).thenReturn(List.of(CAJA, caja2));
 
         List<CajaSucursalResponse> result = service.listarTodas();
@@ -88,21 +90,21 @@ class CajaSucursalServiceTest {
 
     @Test
     void actualizarEstado_encontrada_actualizaYRetornaResponse() {
-        CajaSucursal cajaActualizada = new CajaSucursal(1L, 10L, "ABIERTA");
-        when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, 10L, "CERRADA")));
+        CajaSucursal cajaActualizada = new CajaSucursal(1L, 10L, EstadoCaja.ABIERTA);
+        when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, 10L, EstadoCaja.CERRADA)));
         when(repository.save(any(CajaSucursal.class))).thenReturn(cajaActualizada);
 
-        CajaSucursalResponse result = service.actualizarEstado(1L, "ABIERTA");
+        CajaSucursalResponse result = service.actualizarEstado(1L, EstadoCaja.ABIERTA);
 
         assertEquals("ABIERTA", result.getEstadoActual());
         verify(repository).save(any(CajaSucursal.class));
     }
 
     @Test
-    void actualizarEstado_noExiste_lanzaRuntimeException() {
+    void actualizarEstado_noExiste_lanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.actualizarEstado(99L, "ABIERTA"));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarEstado(99L, EstadoCaja.ABIERTA));
         verify(repository, never()).save(any());
     }
 }

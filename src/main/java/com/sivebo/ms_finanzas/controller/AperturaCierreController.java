@@ -81,14 +81,11 @@ public class AperturaCierreController {
         return ResponseEntity.ok(service.obtenerSesionAbierta(idCaja));
     }
 
-<<<<<<< HEAD
-=======
     @Operation(summary = "Generar reporte de cierre", description = "RF-40: reporte con ingresos, egresos y diferencia de cuadre")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Reporte generado"),
         @ApiResponse(responseCode = "404", description = "Sesión no encontrada")
     })
->>>>>>> refactor
     @GetMapping("/{idSesion}/reporte-cierre")
     public ResponseEntity<ReporteCierreResponse> reporteCierre(@PathVariable Long idSesion) {
         return ResponseEntity.ok(service.generarReporteCierre(idSesion));
