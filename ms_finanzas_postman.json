@@ -1,0 +1,213 @@
+{
+	"info": {
+		"name": "MS Finanzas - SIVEBO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8088"
+		}
+	],
+	"item": [
+		{
+			"name": "Cajas por Sucursal",
+			"item": [
+				{
+					"name": "Crear caja para sucursal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idSucursal\": 1,\n  \"estadoActual\": \"CERRADA\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cajas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "cajas"]
+						}
+					}
+				},
+				{
+					"name": "Listar todas las cajas",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cajas",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "cajas"]
+						}
+					}
+				},
+				{
+					"name": "Obtener caja por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cajas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "cajas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Obtener caja por sucursal",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cajas/sucursal/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "cajas", "sucursal", "1"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar estado de caja",
+					"request": {
+						"method": "PATCH",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cajas/1/estado?nuevoEstado=ABIERTA",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "cajas", "1", "estado"],
+							"query": [
+								{ "key": "nuevoEstado", "value": "ABIERTA" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Apertura y Cierre de Caja",
+			"item": [
+				{
+					"name": "Abrir caja",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idCaja\": 1,\n  \"idUsuario\": 1,\n  \"montoApertura\": 50000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/abrir",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "abrir"]
+						}
+					}
+				},
+				{
+					"name": "Cerrar caja",
+					"request": {
+						"method": "PATCH",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/1/cerrar?montoCierre=75000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "1", "cerrar"],
+							"query": [
+								{ "key": "montoCierre", "value": "75000" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener sesión por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Listar sesiones de una caja",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/caja/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "caja", "1"]
+						}
+					}
+				},
+				{
+					"name": "Obtener sesión abierta",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/caja/1/abierta",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "caja", "1", "abierta"]
+						}
+					}
+				},
+				{
+					"name": "Reporte de cierre",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/aperturas/1/reporte-cierre",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "aperturas", "1", "reporte-cierre"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Movimientos de Caja",
+			"item": [
+				{
+					"name": "Registrar movimiento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idSesion\": 1,\n  \"tipo\": \"INGRESO\",\n  \"monto\": 15000,\n  \"idReferenciaVta\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/movimientos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "movimientos"]
+						}
+					}
+				},
+				{
+					"name": "Listar movimientos por sesión",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/movimientos/sesion/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "movimientos", "sesion", "1"]
+						}
+					}
+				},
+				{
+					"name": "Listar movimientos por tipo",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/movimientos/sesion/1/tipo?tipo=INGRESO",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "v1", "movimientos", "sesion", "1", "tipo"],
+							"query": [
+								{ "key": "tipo", "value": "INGRESO" }
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
