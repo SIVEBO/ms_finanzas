@@ -12,7 +12,7 @@ public class FinanzasClient {
     private final WebClient webClient;
 
     public FinanzasClient(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://localhost:8090").build();
+        this.webClient = builder.baseUrl("http://ms-ventas").build();
     }
 
     // Consulta si una venta existe en ms_ventas
