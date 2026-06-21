@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+<<<<<<< HEAD
 import com.sivebo.ms_finanzas.dto.request.AperturaCierreRequest;
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.request.MovimientoCajaRequest;
@@ -37,6 +38,10 @@ import com.sivebo.ms_finanzas.repository.MovimientoCajaRepository;
 import com.sivebo.ms_finanzas.service.AperturaCierreService;
 import com.sivebo.ms_finanzas.service.CajaSucursalService;
 import com.sivebo.ms_finanzas.service.MovimientoCajaService;
+=======
+@SpringBootTest
+class MsFinanzasApplicationTests {
+>>>>>>> refactor
 
 @ExtendWith(MockitoExtension.class)
 class MsFinanzasApplicationTests {

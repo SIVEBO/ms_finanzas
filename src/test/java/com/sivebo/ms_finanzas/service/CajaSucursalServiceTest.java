@@ -1,0 +1,108 @@
+package com.sivebo.ms_finanzas.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
+import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
+import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
+import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
+
+@ExtendWith(MockitoExtension.class)
+class CajaSucursalServiceTest {
+
+    @Mock CajaSucursalRepository repository;
+
+    @InjectMocks CajaSucursalService service;
+
+    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, "CERRADA");
+
+    @Test
+    void crear_requestValido_guardaYRetornaResponse() {
+        CajaSucursalRequest request = new CajaSucursalRequest(10L, "CERRADA");
+        when(repository.save(any(CajaSucursal.class))).thenReturn(CAJA);
+
+        CajaSucursalResponse result = service.crear(request);
+
+        assertEquals(1L, result.getIdCaja());
+        assertEquals(10L, result.getIdSucursal());
+        assertEquals("CERRADA", result.getEstadoActual());
+        verify(repository).save(any(CajaSucursal.class));
+    }
+
+    @Test
+    void obtenerPorId_encontrada_retornaResponse() {
+        when(repository.findById(1L)).thenReturn(Optional.of(CAJA));
+
+        CajaSucursalResponse result = service.obtenerPorId(1L);
+
+        assertEquals(1L, result.getIdCaja());
+        assertEquals(10L, result.getIdSucursal());
+    }
+
+    @Test
+    void obtenerPorId_noExiste_lanzaRuntimeException() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> service.obtenerPorId(99L));
+    }
+
+    @Test
+    void obtenerPorSucursal_encontrada_retornaResponse() {
+        when(repository.findByIdSucursal(10L)).thenReturn(Optional.of(CAJA));
+
+        CajaSucursalResponse result = service.obtenerPorSucursal(10L);
+
+        assertEquals(1L, result.getIdCaja());
+        assertEquals(10L, result.getIdSucursal());
+    }
+
+    @Test
+    void obtenerPorSucursal_noExiste_lanzaRuntimeException() {
+        when(repository.findByIdSucursal(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> service.obtenerPorSucursal(99L));
+    }
+
+    @Test
+    void listarTodas_retornaTodasLasCajas() {
+        CajaSucursal caja2 = new CajaSucursal(2L, 20L, "ABIERTA");
+        when(repository.findAll()).thenReturn(List.of(CAJA, caja2));
+
+        List<CajaSucursalResponse> result = service.listarTodas();
+
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).getIdCaja());
+        assertEquals(2L, result.get(1).getIdCaja());
+    }
+
+    @Test
+    void actualizarEstado_encontrada_actualizaYRetornaResponse() {
+        CajaSucursal cajaActualizada = new CajaSucursal(1L, 10L, "ABIERTA");
+        when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, 10L, "CERRADA")));
+        when(repository.save(any(CajaSucursal.class))).thenReturn(cajaActualizada);
+
+        CajaSucursalResponse result = service.actualizarEstado(1L, "ABIERTA");
+
+        assertEquals("ABIERTA", result.getEstadoActual());
+        verify(repository).save(any(CajaSucursal.class));
+    }
+
+    @Test
+    void actualizarEstado_noExiste_lanzaRuntimeException() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> service.actualizarEstado(99L, "ABIERTA"));
+        verify(repository, never()).save(any());
+    }
+}

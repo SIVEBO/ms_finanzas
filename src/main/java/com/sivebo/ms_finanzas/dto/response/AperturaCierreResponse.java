@@ -18,5 +18,7 @@ public class AperturaCierreResponse {
     private LocalDateTime fechaHoraApertura;
     private LocalDateTime fechaHoraCierre;
     private BigDecimal montoApertura;
-    private BigDecimal montoCierre;  
+    private BigDecimal montoCierre;
+    private BigDecimal saldoCalculado;
+    private BigDecimal diferenciaCuadre;
 }
