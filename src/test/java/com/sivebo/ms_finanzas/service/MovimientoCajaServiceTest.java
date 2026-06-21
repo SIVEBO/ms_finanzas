@@ -41,13 +41,13 @@ class MovimientoCajaServiceTest {
             LocalDateTime.of(2026, 6, 1, 8, 0), null);
 
     private MovimientoCaja buildMovimiento(Long id, TipoMovimiento tipo, BigDecimal monto) {
-        return new MovimientoCaja(id, SESION, tipo, monto, null);
+        return new MovimientoCaja(id, SESION, tipo, monto, null, null);
     }
 
     @Test
     void registrar_sesionExiste_guardaYRetornaResponse() {
-        MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L);
-        MovimientoCaja guardado = new MovimientoCaja(1L, SESION, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L);
+        MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L, null);
+        MovimientoCaja guardado = new MovimientoCaja(1L, SESION, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L, null);
 
         when(aperturaCierreRepository.findById(1L)).thenReturn(Optional.of(SESION));
         when(repository.save(any(MovimientoCaja.class))).thenReturn(guardado);
@@ -62,8 +62,22 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
+    void registrar_egresoConConcepto_persisteConcepto() {
+        MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.EGRESO, new BigDecimal("15000"), null, "Compra de insumos");
+        MovimientoCaja guardado = new MovimientoCaja(2L, SESION, TipoMovimiento.EGRESO, new BigDecimal("15000"), null, "Compra de insumos");
+
+        when(aperturaCierreRepository.findById(1L)).thenReturn(Optional.of(SESION));
+        when(repository.save(any(MovimientoCaja.class))).thenReturn(guardado);
+
+        MovimientoCajaResponse result = service.registrar(request);
+
+        assertEquals("EGRESO", result.getTipo());
+        assertEquals("Compra de insumos", result.getConcepto());
+    }
+
+    @Test
     void registrar_sesionNoExiste_lanzaRecursoNoEncontrado() {
-        MovimientoCajaRequest request = new MovimientoCajaRequest(99L, TipoMovimiento.INGRESO, new BigDecimal("50000"), null);
+        MovimientoCajaRequest request = new MovimientoCajaRequest(99L, TipoMovimiento.INGRESO, new BigDecimal("50000"), null, null);
         when(aperturaCierreRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.registrar(request));

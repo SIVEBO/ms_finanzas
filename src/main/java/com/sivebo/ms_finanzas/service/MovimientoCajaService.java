@@ -36,6 +36,7 @@ public class MovimientoCajaService {
         mov.setTipo(request.getTipo());
         mov.setMonto(request.getMonto());
         mov.setIdReferenciaVta(request.getIdReferenciaVta());
+        mov.setConcepto(request.getConcepto());
         return toResponse(repository.save(mov));
     }
 
@@ -58,6 +59,7 @@ public class MovimientoCajaService {
         r.setTipo(m.getTipo().name());
         r.setMonto(m.getMonto());
         r.setIdReferenciaVta(m.getIdReferenciaVta());
+        r.setConcepto(m.getConcepto());
         return r;
     }
 }

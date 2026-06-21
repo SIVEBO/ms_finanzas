@@ -26,4 +26,6 @@ public class MovimientoCajaRequest {
     private BigDecimal monto;
 
     private Long idReferenciaVta;
+
+    private String concepto;
 }

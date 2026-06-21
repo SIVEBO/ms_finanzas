@@ -96,8 +96,8 @@ class AperturaCierreServiceTest {
     @Test
     void cerrarCaja_calculaCuadreCorrectamente() {
         AperturaCierre sesion = sesionAbierta();
-        MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L);
-        MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L);
+        MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L, null);
+        MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L, null);
         AperturaCierre sesionCerrada = sesionCerrada();
 
         when(repository.findById(1L)).thenReturn(Optional.of(sesion));
@@ -182,8 +182,8 @@ class AperturaCierreServiceTest {
     @Test
     void generarReporteCierre_sesionCerrada_retornaReporteCompleto() {
         AperturaCierre sesion = sesionCerrada();
-        MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L);
-        MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L);
+        MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L, null);
+        MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L, null);
 
         when(repository.findById(1L)).thenReturn(Optional.of(sesion));
         when(movimientoRepository.findBySesionIdSesion(1L)).thenReturn(List.of(ingreso, egreso));
