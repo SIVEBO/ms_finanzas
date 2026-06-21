@@ -25,7 +25,7 @@ public class MovimientoCajaRequest {
     @Positive(message = "El monto del movimiento debe ser positivo")
     private BigDecimal monto;
 
-    private Long idReferenciaVta;
+    private Long idVenta;
 
     private String concepto;
 }

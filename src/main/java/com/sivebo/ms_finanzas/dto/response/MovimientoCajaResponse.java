@@ -15,7 +15,7 @@ public class MovimientoCajaResponse {
     private Long idSesion;
     private String tipo;
     private BigDecimal monto;
-    private Long idReferenciaVta;
+    private Long idVenta;
     private String concepto;
 
 }

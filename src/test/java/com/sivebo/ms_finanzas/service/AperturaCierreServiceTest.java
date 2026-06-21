@@ -198,10 +198,10 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void generarReporteCierre_sesionAbierta_lanzaRuntimeException() {
+    void generarReporteCierre_sesionAbierta_lanzaReglaNegocioException() {
         when(repository.findById(1L)).thenReturn(Optional.of(sesionAbierta()));
 
-        assertThrows(RuntimeException.class, () -> service.generarReporteCierre(1L));
+        assertThrows(ReglaNegocioException.class, () -> service.generarReporteCierre(1L));
     }
 
     @Test

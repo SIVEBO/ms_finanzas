@@ -173,7 +173,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"idSesion\": 1,\n  \"tipo\": \"INGRESO\",\n  \"monto\": 15000,\n  \"idReferenciaVta\": null\n}"
+							"raw": "{\n  \"idSesion\": 1,\n  \"tipo\": \"INGRESO\",\n  \"monto\": 15000,\n  \"idVenta\": null\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/movimientos",

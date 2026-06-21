@@ -113,7 +113,7 @@ public class AperturaCierreService {
         AperturaCierre sesion = repository.findById(idSesion)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
         if (sesion.getFechaHoraCierre() == null) {
-            throw new RuntimeException("La sesión " + idSesion + " aún está abierta");
+            throw new ReglaNegocioException("La sesión " + idSesion + " aún está abierta");
         }
         List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
         BigDecimal totalIngresos = movimientos.stream()

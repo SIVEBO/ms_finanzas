@@ -35,7 +35,7 @@ public class MovimientoCajaService {
         mov.setSesion(sesion);
         mov.setTipo(request.getTipo());
         mov.setMonto(request.getMonto());
-        mov.setIdReferenciaVta(request.getIdReferenciaVta());
+        mov.setIdVenta(request.getIdVenta());
         mov.setConcepto(request.getConcepto());
         return toResponse(repository.save(mov));
     }
@@ -58,7 +58,7 @@ public class MovimientoCajaService {
         r.setIdSesion(m.getSesion().getIdSesion());
         r.setTipo(m.getTipo().name());
         r.setMonto(m.getMonto());
-        r.setIdReferenciaVta(m.getIdReferenciaVta());
+        r.setIdVenta(m.getIdVenta());
         r.setConcepto(m.getConcepto());
         return r;
     }
