@@ -41,8 +41,8 @@ public class MovimientoCaja {
     @Column(name = "monto", nullable = false)
     private BigDecimal monto;
 
-    @Column(name = "id_referencia_vta")
-    private Long idReferenciaVta;
+    @Column(name = "id_venta")
+    private Long idVenta;
 
     @Column(name = "concepto", length = 255)
     private String concepto;
