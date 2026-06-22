@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Movimientos de Caja", description = "RF-37/38: registro de ingresos y egresos de caja")
+@Tag(name = "Movimientos de Caja", description = "registro de ingresos y egresos de caja")
 @RestController
 @RequestMapping("api/v1/movimientos")
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class MovimientoCajaController {
 
     private final MovimientoCajaService service;
 
-    @Operation(summary = "Registrar movimiento de caja", description = "RF-38: registra un ingreso o egreso manual en la sesión activa")
+    @Operation(summary = "Registrar movimiento de caja", description = "registra un ingreso o egreso manual en la sesión activa")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Movimiento registrado"),
         @ApiResponse(responseCode = "404", description = "Sesión de caja no encontrada")

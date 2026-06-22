@@ -62,7 +62,6 @@ public class AperturaCierreService {
             throw new ReglaNegocioException("Esta sesión ya fue cerrada anteriormente");
         }
 
-        // RF-39: cuadre — compute expected balance from movimientos
         List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
         BigDecimal totalIngresos = movimientos.stream()
                 .filter(m -> m.getTipo() == TipoMovimiento.INGRESO)
@@ -107,7 +106,6 @@ public class AperturaCierreService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("No hay sesión abierta para esta caja")));
     }
 
-    // RF-40: reporte de cierre con cuadre
     public ReporteCierreResponse generarReporteCierre(Long idSesion) {
         log.info("Generando reporte de cierre para sesión id: {}", idSesion);
         AperturaCierre sesion = repository.findById(idSesion)

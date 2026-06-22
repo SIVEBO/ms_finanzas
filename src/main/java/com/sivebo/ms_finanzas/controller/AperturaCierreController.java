@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Apertura y Cierre de Caja", description = "RF-36/39/40: sesiones de apertura y cierre de caja por sucursal")
+@Tag(name = "Apertura y Cierre de Caja", description = "sesiones de apertura y cierre de caja por sucursal")
 @RestController
 @RequestMapping("api/v1/aperturas")
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class AperturaCierreController {
 
     private final AperturaCierreService service;
 
-    @Operation(summary = "Abrir caja", description = "RF-36: inicia sesión de caja con monto inicial")
+    @Operation(summary = "Abrir caja", description = "inicia sesión de caja con monto inicial")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Caja abierta exitosamente"),
         @ApiResponse(responseCode = "400", description = "La caja ya tiene una sesión abierta")
@@ -44,7 +44,7 @@ public class AperturaCierreController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.abrirCaja(request));
     }
 
-    @Operation(summary = "Cerrar caja", description = "RF-39: cierra la sesión declarando el monto final contado")
+    @Operation(summary = "Cerrar caja", description = "cierra la sesión declarando el monto final contado")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Caja cerrada"),
         @ApiResponse(responseCode = "404", description = "Sesión no encontrada")
@@ -81,7 +81,7 @@ public class AperturaCierreController {
         return ResponseEntity.ok(service.obtenerSesionAbierta(idCaja));
     }
 
-    @Operation(summary = "Generar reporte de cierre", description = "RF-40: reporte con ingresos, egresos y diferencia de cuadre")
+    @Operation(summary = "Generar reporte de cierre", description = "reporte con ingresos, egresos y diferencia de cuadre")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Reporte generado"),
         @ApiResponse(responseCode = "404", description = "Sesión no encontrada")

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.sivebo.ms_finanzas.dto.request.CajaSucursalRequest;
 import com.sivebo.ms_finanzas.dto.response.CajaSucursalResponse;
 import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
+import com.sivebo.ms_finanzas.exception.ReglaNegocioException;
 import com.sivebo.ms_finanzas.model.entity.CajaSucursal;
 import com.sivebo.ms_finanzas.model.enums.EstadoCaja;
 import com.sivebo.ms_finanzas.repository.CajaSucursalRepository;
@@ -26,6 +27,10 @@ public class CajaSucursalService {
     
     public CajaSucursalResponse crear(CajaSucursalRequest request) {
         log.info("Creando caja para sucursal id: {}", request.getIdSucursal());
+        if (repository.findByIdSucursal(request.getIdSucursal()).isPresent()) {
+            throw new ReglaNegocioException(
+                    "Ya existe una caja para la sucursal: " + request.getIdSucursal());
+        }
         CajaSucursal caja = new CajaSucursal();
         caja.setIdSucursal(request.getIdSucursal());
         caja.setEstadoActual(request.getEstadoActual());

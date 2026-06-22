@@ -38,8 +38,8 @@ class AperturaCierreServiceTest {
 
     @InjectMocks AperturaCierreService service;
 
-    private static final LocalDateTime APERTURA_DT = LocalDateTime.of(2026, 6, 1, 8, 0);
-    private static final LocalDateTime CIERRE_DT = LocalDateTime.of(2026, 6, 1, 18, 0);
+    private static final LocalDateTime APERTURADT = LocalDateTime.of(2026, 6, 1, 8, 0);
+    private static final LocalDateTime CIERREDT = LocalDateTime.of(2026, 6, 1, 18, 0);
 
     private CajaSucursal cajaAbierta() {
         return new CajaSucursal(1L, 10L, EstadoCaja.ABIERTA);
@@ -50,16 +50,16 @@ class AperturaCierreServiceTest {
     }
 
     private AperturaCierre sesionAbierta() {
-        return new AperturaCierre(1L, cajaAbierta(), 50L, new BigDecimal("100000"), null, APERTURA_DT, null);
+        return new AperturaCierre(1L, cajaAbierta(), 50L, new BigDecimal("100000"), null, APERTURADT, null);
     }
 
     private AperturaCierre sesionCerrada() {
         return new AperturaCierre(1L, cajaAbierta(), 50L, new BigDecimal("100000"), new BigDecimal("150000"),
-                APERTURA_DT, CIERRE_DT);
+                APERTURADT, CIERREDT);
     }
 
     @Test
-    void abrirCaja_cajaExiste_creaYRetornaSesion() {
+    void abrirCajaCajaExisteCreaYRetornaSesion() {
         AperturaCierreRequest request = new AperturaCierreRequest(1L, 50L, new BigDecimal("100000"));
         AperturaCierre sesionGuardada = sesionAbierta();
 
@@ -76,7 +76,7 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void abrirCaja_cajaNoExiste_lanzaRecursoNoEncontrado() {
+    void abrirCajaCajaNoExisteLanzaRecursoNoEncontrado() {
         AperturaCierreRequest request = new AperturaCierreRequest(99L, 50L, new BigDecimal("100000"));
         when(cajaRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -85,7 +85,7 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void abrirCaja_cajaYaAbierta_lanzaReglaNegocio() {
+    void abrirCajaCajaYaAbiertaLanzaReglaNegocio() {
         AperturaCierreRequest request = new AperturaCierreRequest(1L, 50L, new BigDecimal("100000"));
         when(cajaRepository.findById(1L)).thenReturn(Optional.of(cajaAbierta()));
 
@@ -94,7 +94,7 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void cerrarCaja_calculaCuadreCorrectamente() {
+    void cerrarCajaCalculaCuadreCorrectamente() {
         AperturaCierre sesion = sesionAbierta();
         MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L, null);
         MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L, null);
@@ -114,30 +114,30 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void cerrarCaja_sesionNoExiste_lanzaRecursoNoEncontrado() {
+    void cerrarCajaSesionNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.cerrarCaja(99L, new BigDecimal("100000")));
     }
 
     @Test
-    void cerrarCaja_cajaYaCerrada_lanzaReglaNegocio() {
-        AperturaCierre sesion = new AperturaCierre(1L, cajaCerrada(), 50L, new BigDecimal("100000"), null, APERTURA_DT, null);
+    void cerrarCajaCajaYaCerradaLanzaReglaNegocio() {
+        AperturaCierre sesion = new AperturaCierre(1L, cajaCerrada(), 50L, new BigDecimal("100000"), null, APERTURADT, null);
         when(repository.findById(1L)).thenReturn(Optional.of(sesion));
 
         assertThrows(ReglaNegocioException.class, () -> service.cerrarCaja(1L, new BigDecimal("100000")));
     }
 
     @Test
-    void cerrarCaja_sesionYaCerrada_lanzaReglaNegocio() {
-        AperturaCierre sesion = new AperturaCierre(1L, cajaAbierta(), 50L, new BigDecimal("100000"), new BigDecimal("100000"), APERTURA_DT, CIERRE_DT);
+    void cerrarCajaSesionYaCerradaLanzaReglaNegocio() {
+        AperturaCierre sesion = new AperturaCierre(1L, cajaAbierta(), 50L, new BigDecimal("100000"), new BigDecimal("100000"), APERTURADT, CIERREDT);
         when(repository.findById(1L)).thenReturn(Optional.of(sesion));
 
         assertThrows(ReglaNegocioException.class, () -> service.cerrarCaja(1L, new BigDecimal("100000")));
     }
 
     @Test
-    void obtenerPorId_encontrado_retornaResponse() {
+    void obtenerPorIdEncontradoRetornaResponse() {
         when(repository.findById(1L)).thenReturn(Optional.of(sesionAbierta()));
 
         AperturaCierreResponse result = service.obtenerPorId(1L);
@@ -147,14 +147,14 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void obtenerPorId_noExiste_lanzaRecursoNoEncontrado() {
+    void obtenerPorIdNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorId(99L));
     }
 
     @Test
-    void listarPorCaja_retornaTodasLasSesiones() {
+    void listarPorCajaRetornaTodasLasSesiones() {
         when(repository.findByCajaIdCaja(1L)).thenReturn(List.of(sesionAbierta(), sesionCerrada()));
 
         List<AperturaCierreResponse> result = service.listarPorCaja(1L);
@@ -163,7 +163,7 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void obtenerSesionAbierta_encontrada_retornaResponse() {
+    void obtenerSesionAbiertaEncontradaRetornaResponse() {
         when(repository.findByCajaIdCajaAndFechaHoraCierreIsNull(1L)).thenReturn(Optional.of(sesionAbierta()));
 
         AperturaCierreResponse result = service.obtenerSesionAbierta(1L);
@@ -173,14 +173,14 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void obtenerSesionAbierta_noHaySesion_lanzaRecursoNoEncontrado() {
+    void obtenerSesionAbiertaNoHaySesionLanzaRecursoNoEncontrado() {
         when(repository.findByCajaIdCajaAndFechaHoraCierreIsNull(1L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerSesionAbierta(1L));
     }
 
     @Test
-    void generarReporteCierre_sesionCerrada_retornaReporteCompleto() {
+    void generarReporteCierreSesionCerradaRetornaReporteCompleto() {
         AperturaCierre sesion = sesionCerrada();
         MovimientoCaja ingreso = new MovimientoCaja(1L, sesion, TipoMovimiento.INGRESO, new BigDecimal("80000"), 101L, null);
         MovimientoCaja egreso = new MovimientoCaja(2L, sesion, TipoMovimiento.EGRESO, new BigDecimal("30000"), 102L, null);
@@ -198,14 +198,14 @@ class AperturaCierreServiceTest {
     }
 
     @Test
-    void generarReporteCierre_sesionAbierta_lanzaRuntimeException() {
+    void generarReporteCierreSesionAbiertaLanzaRuntimeException() {
         when(repository.findById(1L)).thenReturn(Optional.of(sesionAbierta()));
 
         assertThrows(RuntimeException.class, () -> service.generarReporteCierre(1L));
     }
 
     @Test
-    void generarReporteCierre_sesionNoExiste_lanzaRecursoNoEncontrado() {
+    void generarReporteCierreSesionNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.generarReporteCierre(99L));

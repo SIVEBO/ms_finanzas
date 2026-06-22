@@ -15,7 +15,6 @@ public class FinanzasClient {
         this.webClient = builder.baseUrl("http://ms-ventas").build();
     }
 
-    // Consulta si una venta existe en ms_ventas
     public Boolean verificarVenta(Long idVenta) {
         log.info("Consultando venta id: {} en ms-ventas", idVenta);
         try {

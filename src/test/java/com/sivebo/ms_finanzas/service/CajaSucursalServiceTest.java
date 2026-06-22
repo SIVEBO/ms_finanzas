@@ -30,7 +30,7 @@ class CajaSucursalServiceTest {
     private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, EstadoCaja.CERRADA);
 
     @Test
-    void crear_requestValido_guardaYRetornaResponse() {
+    void crearRequestValidoGuardaYRetornaResponse() {
         CajaSucursalRequest request = new CajaSucursalRequest(10L, EstadoCaja.CERRADA);
         when(repository.save(any(CajaSucursal.class))).thenReturn(CAJA);
 
@@ -43,7 +43,7 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void obtenerPorId_encontrada_retornaResponse() {
+    void obtenerPorIdEncontradaRetornaResponse() {
         when(repository.findById(1L)).thenReturn(Optional.of(CAJA));
 
         CajaSucursalResponse result = service.obtenerPorId(1L);
@@ -53,14 +53,14 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void obtenerPorId_noExiste_lanzaRecursoNoEncontrado() {
+    void obtenerPorIdNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorId(99L));
     }
 
     @Test
-    void obtenerPorSucursal_encontrada_retornaResponse() {
+    void obtenerPorSucursalEncontradaRetornaResponse() {
         when(repository.findByIdSucursal(10L)).thenReturn(Optional.of(CAJA));
 
         CajaSucursalResponse result = service.obtenerPorSucursal(10L);
@@ -70,14 +70,14 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void obtenerPorSucursal_noExiste_lanzaRecursoNoEncontrado() {
+    void obtenerPorSucursalNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findByIdSucursal(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorSucursal(99L));
     }
 
     @Test
-    void listarTodas_retornaTodasLasCajas() {
+    void listarTodasRetornaTodasLasCajas() {
         CajaSucursal caja2 = new CajaSucursal(2L, 20L, EstadoCaja.ABIERTA);
         when(repository.findAll()).thenReturn(List.of(CAJA, caja2));
 
@@ -89,7 +89,7 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void actualizarEstado_encontrada_actualizaYRetornaResponse() {
+    void actualizarEstadoEncontradaActualizaYRetornaResponse() {
         CajaSucursal cajaActualizada = new CajaSucursal(1L, 10L, EstadoCaja.ABIERTA);
         when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, 10L, EstadoCaja.CERRADA)));
         when(repository.save(any(CajaSucursal.class))).thenReturn(cajaActualizada);
@@ -101,7 +101,7 @@ class CajaSucursalServiceTest {
     }
 
     @Test
-    void actualizarEstado_noExiste_lanzaRecursoNoEncontrado() {
+    void actualizarEstadoNoExisteLanzaRecursoNoEncontrado() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarEstado(99L, EstadoCaja.ABIERTA));

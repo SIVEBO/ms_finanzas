@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "ms_finanzas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "SIVEBO ms_finanzas — todos los enpoints via el API gateway ({{baseUrl}}). Una caja es creada CERRADA luego abierta (crearla ABIERTA devuelve 500). Ids encadenados: {{idCaja}} -> {{idSesion}}. El cierre/estado ops corre ultimo para que movimientos post contra una sesion ABIERTA."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "idSucursal", "value": "1" },
+    { "key": "idUsuario", "value": "1" },
+    { "key": "idVenta", "value": "1" },
+    { "key": "idCaja", "value": "1" },
+    { "key": "idSesion", "value": "1" },
+    { "key": "idMovimiento", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "CajaSucursalController",
+      "item": [
+        {
+          "name": "Crear caja",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idSucursal\": {{idSucursal}},\n  \"estadoActual\": \"CERRADA\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/cajas", "host": ["{{baseUrl}}"], "path": ["api","v1","cajas"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idCaja !== undefined && j.idCaja !== null) pm.collectionVariables.set(\"idCaja\", j.idCaja);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Listar cajas",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/cajas", "host": ["{{baseUrl}}"], "path": ["api","v1","cajas"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Obtener caja por id",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/cajas/{{idCaja}}", "host": ["{{baseUrl}}"], "path": ["api","v1","cajas","{{idCaja}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Obtener caja por sucursal",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/cajas/sucursal/{{idSucursal}}", "host": ["{{baseUrl}}"], "path": ["api","v1","cajas","sucursal","{{idSucursal}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "AperturaCierreController (abrir)",
+      "item": [
+        {
+          "name": "Abrir caja",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idCaja\": {{idCaja}},\n  \"idUsuario\": {{idUsuario}},\n  \"montoApertura\": 50000\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/aperturas/abrir", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","abrir"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idSesion !== undefined && j.idSesion !== null) pm.collectionVariables.set(\"idSesion\", j.idSesion);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Obtener sesion por id",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/aperturas/{{idSesion}}", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","{{idSesion}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Sesiones por caja",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/aperturas/caja/{{idCaja}}", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","caja","{{idCaja}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Sesion abierta por caja",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/aperturas/caja/{{idCaja}}/abierta", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","caja","{{idCaja}}","abierta"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "MovimientoCajaController",
+      "item": [
+        {
+          "name": "Crear movimiento",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idSesion\": {{idSesion}},\n  \"tipo\": \"INGRESO\",\n  \"monto\": 25000,\n  \"idReferenciaVta\": {{idVenta}},\n  \"concepto\": \"Venta de embalaje\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/movimientos", "host": ["{{baseUrl}}"], "path": ["api","v1","movimientos"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idMovimiento !== undefined && j.idMovimiento !== null) pm.collectionVariables.set(\"idMovimiento\", j.idMovimiento);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Movimientos por sesion",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/movimientos/sesion/{{idSesion}}", "host": ["{{baseUrl}}"], "path": ["api","v1","movimientos","sesion","{{idSesion}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Movimientos por sesion+tipo",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/movimientos/sesion/{{idSesion}}/tipo?tipo=INGRESO", "host": ["{{baseUrl}}"], "path": ["api","v1","movimientos","sesion","{{idSesion}}","tipo"], "query": [ { "key": "tipo", "value": "INGRESO" } ] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "Cierre y estado (correr ultimo)",
+      "item": [
+        {
+          "name": "Cerrar caja",
+          "request": {
+            "method": "PATCH", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v1/aperturas/{{idSesion}}/cerrar?montoCierre=75000", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","{{idSesion}}","cerrar"], "query": [ { "key": "montoCierre", "value": "75000" } ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Reporte cierre",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/aperturas/{{idSesion}}/reporte-cierre", "host": ["{{baseUrl}}"], "path": ["api","v1","aperturas","{{idSesion}}","reporte-cierre"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Cambiar estado caja",
+          "request": {
+            "method": "PATCH", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v1/cajas/{{idCaja}}/estado?nuevoEstado=ABIERTA", "host": ["{{baseUrl}}"], "path": ["api","v1","cajas","{{idCaja}}","estado"], "query": [ { "key": "nuevoEstado", "value": "ABIERTA" } ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    }
+  ]
+}

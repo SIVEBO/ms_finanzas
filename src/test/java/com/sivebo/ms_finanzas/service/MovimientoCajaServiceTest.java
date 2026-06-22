@@ -45,7 +45,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void registrar_sesionExiste_guardaYRetornaResponse() {
+    void registrarSesionExisteGuardaYRetornaResponse() {
         MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L, null);
         MovimientoCaja guardado = new MovimientoCaja(1L, SESION, TipoMovimiento.INGRESO, new BigDecimal("50000"), 101L, null);
 
@@ -62,7 +62,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void registrar_egresoConConcepto_persisteConcepto() {
+    void registrarEgresoConConceptoPersisteConcepto() {
         MovimientoCajaRequest request = new MovimientoCajaRequest(1L, TipoMovimiento.EGRESO, new BigDecimal("15000"), null, "Compra de insumos");
         MovimientoCaja guardado = new MovimientoCaja(2L, SESION, TipoMovimiento.EGRESO, new BigDecimal("15000"), null, "Compra de insumos");
 
@@ -76,7 +76,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void registrar_sesionNoExiste_lanzaRecursoNoEncontrado() {
+    void registrarSesionNoExisteLanzaRecursoNoEncontrado() {
         MovimientoCajaRequest request = new MovimientoCajaRequest(99L, TipoMovimiento.INGRESO, new BigDecimal("50000"), null, null);
         when(aperturaCierreRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -85,7 +85,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void listarPorSesion_retornaTodosLosMovimientos() {
+    void listarPorSesionRetornaTodosLosMovimientos() {
         List<MovimientoCaja> movimientos = List.of(
                 buildMovimiento(1L, TipoMovimiento.INGRESO, new BigDecimal("50000")),
                 buildMovimiento(2L, TipoMovimiento.EGRESO, new BigDecimal("20000")));
@@ -99,7 +99,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void listarPorSesionYTipo_filtraPorTipoCorrectamente() {
+    void listarPorSesionYTipoFiltraPorTipoCorrectamente() {
         List<MovimientoCaja> ingresos = List.of(
                 buildMovimiento(1L, TipoMovimiento.INGRESO, new BigDecimal("50000")),
                 buildMovimiento(3L, TipoMovimiento.INGRESO, new BigDecimal("30000")));
@@ -112,7 +112,7 @@ class MovimientoCajaServiceTest {
     }
 
     @Test
-    void listarPorSesion_sinMovimientos_retornaListaVacia() {
+    void listarPorSesionSinMovimientosRetornaListaVacia() {
         when(repository.findBySesionIdSesion(1L)).thenReturn(List.of());
 
         assertTrue(service.listarPorSesion(1L).isEmpty());
