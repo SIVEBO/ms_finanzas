@@ -3,6 +3,7 @@ package com.sivebo.ms_finanzas.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -27,15 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AperturaCierreService {  
+public class AperturaCierreService {
 
     private final AperturaCierreRepository repository;
     private final CajaSucursalRepository cajaRepository;
     private final MovimientoCajaRepository movimientoRepository;
 
     public AperturaCierreResponse abrirCaja(AperturaCierreRequest request) {
-        log.info("Abriendo caja id: {}", request.getIdCaja());
-        CajaSucursal caja = cajaRepository.findById(request.getIdCaja())
+        log.info("Abriendo caja de sucursal: {}", request.getNombreSucursal());
+        CajaSucursal caja = cajaRepository.findByNombreSucursal(request.getNombreSucursal())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada"));
         if (caja.getEstadoActual() == EstadoCaja.ABIERTA) {
             throw new ReglaNegocioException("La caja ya se encuentra abierta");
@@ -44,10 +45,11 @@ public class AperturaCierreService {
         cajaRepository.save(caja);
 
         AperturaCierre apertura = new AperturaCierre();
-        apertura.setCaja(caja);
-        apertura.setIdUsuario(request.getIdUsuario());
+        apertura.setCodSesion(generarCodSesion());
+        apertura.setNombreSucursal(request.getNombreSucursal());
+        apertura.setUsername(request.getUsername());
         apertura.setMontoApertura(request.getMontoApertura());
-        apertura.setFechaHoraApertura(LocalDateTime.now());
+        apertura.setFechaHoraAp(LocalDateTime.now());
         return toResponse(repository.save(apertura));
     }
 
@@ -55,14 +57,16 @@ public class AperturaCierreService {
         log.info("Cerrando sesión id: {}", idSesion);
         AperturaCierre sesion = repository.findById(idSesion)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
-        if (sesion.getCaja().getEstadoActual() == EstadoCaja.CERRADA) {
+        CajaSucursal caja = cajaRepository.findByNombreSucursal(sesion.getNombreSucursal())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada"));
+        if (caja.getEstadoActual() == EstadoCaja.CERRADA) {
             throw new ReglaNegocioException("La caja ya se encuentra cerrada");
         }
-        if (sesion.getFechaHoraCierre() != null) {
+        if (sesion.getFechaHoraCi() != null) {
             throw new ReglaNegocioException("Esta sesión ya fue cerrada anteriormente");
         }
 
-        List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
+        List<MovimientoCaja> movimientos = movimientoRepository.findByCodSesion(sesion.getCodSesion());
         BigDecimal totalIngresos = movimientos.stream()
                 .filter(m -> m.getTipo() == TipoMovimiento.INGRESO)
                 .map(MovimientoCaja::getMonto)
@@ -77,32 +81,32 @@ public class AperturaCierreService {
                 idSesion, saldoCalculado, montoCierre, diferencia);
 
         sesion.setMontoCierre(montoCierre);
-        sesion.setFechaHoraCierre(LocalDateTime.now());
-        sesion.getCaja().setEstadoActual(EstadoCaja.CERRADA);
-        cajaRepository.save(sesion.getCaja());
+        sesion.setFechaHoraCi(LocalDateTime.now());
+        caja.setEstadoActual(EstadoCaja.CERRADA);
+        cajaRepository.save(caja);
         AperturaCierreResponse r = toResponse(repository.save(sesion));
         r.setSaldoCalculado(saldoCalculado);
         r.setDiferenciaCuadre(diferencia);
         return r;
     }
 
-    
+
     public AperturaCierreResponse obtenerPorId(Long id) {
         log.info("Buscando sesión id: {}", id);
         return toResponse(repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada")));
     }
 
-    
-    public List<AperturaCierreResponse> listarPorCaja(Long idCaja) {
-        log.info("Listando sesiones de caja id: {}", idCaja);
-        return repository.findByCajaIdCaja(idCaja).stream().map(this::toResponse).collect(Collectors.toList());
+
+    public List<AperturaCierreResponse> listarPorCaja(String nombreSucursal) {
+        log.info("Listando sesiones de la sucursal: {}", nombreSucursal);
+        return repository.findByNombreSucursal(nombreSucursal).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    
-    public AperturaCierreResponse obtenerSesionAbierta(Long idCaja) {
-        log.info("Buscando sesión abierta de caja id: {}", idCaja);
-        return toResponse(repository.findByCajaIdCajaAndFechaHoraCierreIsNull(idCaja)
+
+    public AperturaCierreResponse obtenerSesionAbierta(String nombreSucursal) {
+        log.info("Buscando sesión abierta de la sucursal: {}", nombreSucursal);
+        return toResponse(repository.findByNombreSucursalAndFechaHoraCiIsNull(nombreSucursal)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No hay sesión abierta para esta caja")));
     }
 
@@ -110,10 +114,10 @@ public class AperturaCierreService {
         log.info("Generando reporte de cierre para sesión id: {}", idSesion);
         AperturaCierre sesion = repository.findById(idSesion)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
-        if (sesion.getFechaHoraCierre() == null) {
+        if (sesion.getFechaHoraCi() == null) {
             throw new ReglaNegocioException("La sesión " + idSesion + " aún está abierta");
         }
-        List<MovimientoCaja> movimientos = movimientoRepository.findBySesionIdSesion(idSesion);
+        List<MovimientoCaja> movimientos = movimientoRepository.findByCodSesion(sesion.getCodSesion());
         BigDecimal totalIngresos = movimientos.stream()
                 .filter(m -> m.getTipo() == TipoMovimiento.INGRESO)
                 .map(MovimientoCaja::getMonto)
@@ -127,10 +131,11 @@ public class AperturaCierreService {
 
         ReporteCierreResponse r = new ReporteCierreResponse();
         r.setIdSesion(sesion.getIdSesion());
-        r.setIdCaja(sesion.getCaja().getIdCaja());
-        r.setIdUsuario(sesion.getIdUsuario());
-        r.setFechaHoraApertura(sesion.getFechaHoraApertura());
-        r.setFechaHoraCierre(sesion.getFechaHoraCierre());
+        r.setCodSesion(sesion.getCodSesion());
+        r.setNombreSucursal(sesion.getNombreSucursal());
+        r.setUsername(sesion.getUsername());
+        r.setFechaHoraAp(sesion.getFechaHoraAp());
+        r.setFechaHoraCi(sesion.getFechaHoraCi());
         r.setMontoApertura(sesion.getMontoApertura());
         r.setMontoCierre(sesion.getMontoCierre());
         r.setTotalIngresos(totalIngresos);
@@ -140,16 +145,21 @@ public class AperturaCierreService {
         return r;
     }
 
+    private String generarCodSesion() {
+        return "SES-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
     private AperturaCierreResponse toResponse(AperturaCierre a) {
         AperturaCierreResponse r = new AperturaCierreResponse();
         r.setIdSesion(a.getIdSesion());
-        r.setIdCaja(a.getCaja().getIdCaja());
-        r.setIdUsuario(a.getIdUsuario());
+        r.setCodSesion(a.getCodSesion());
+        r.setNombreSucursal(a.getNombreSucursal());
+        r.setUsername(a.getUsername());
         r.setMontoApertura(a.getMontoApertura());
         r.setMontoCierre(a.getMontoCierre());
-        r.setFechaHoraApertura(a.getFechaHoraApertura());
-        r.setFechaHoraCierre(a.getFechaHoraCierre());
+        r.setFechaHoraAp(a.getFechaHoraAp());
+        r.setFechaHoraCi(a.getFechaHoraCi());
         return r;
     }
-    
+
 }

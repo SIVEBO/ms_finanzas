@@ -2,6 +2,7 @@ package com.sivebo.ms_finanzas.dto.request;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -12,12 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AperturaCierreRequest {
-    
-    @NotNull(message = "El id de la caja es obligatorio")
-    private Long idCaja;
 
-    @NotNull(message = "El id del usuario es obligatorio")
-    private Long idUsuario;
+    @NotBlank(message = "El nombre de la sucursal es obligatorio")
+    private String nombreSucursal;
+
+    @NotBlank(message = "El username del usuario es obligatorio")
+    private String username;
 
     @NotNull(message = "El monto de apertura es obligatorio")
     @Positive(message = "El monto de apertura debe ser positivo")

@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MovimientoCajaResponse {
     
-    private Long idMovimiento;
-    private Long idSesion;
+    private Long idMov;
+    private String codSesion;
     private String tipo;
     private BigDecimal monto;
-    private Long idVenta;
+    private String nroBoleta;
     private String concepto;
 
 }

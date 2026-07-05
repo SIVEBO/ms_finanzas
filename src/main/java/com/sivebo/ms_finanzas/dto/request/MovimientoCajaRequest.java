@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -14,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovimientoCajaRequest {
-    
-    @NotNull(message = "El id de la sesión es obligatorio")
-    private Long idSesion;
+
+    @NotBlank(message = "El código de sesión es obligatorio")
+    private String codSesion;
 
     @NotNull(message = "El tipo de movimiento es obligatorio")
     private TipoMovimiento tipo;
@@ -25,7 +26,7 @@ public class MovimientoCajaRequest {
     @Positive(message = "El monto del movimiento debe ser positivo")
     private BigDecimal monto;
 
-    private Long idVenta;
+    private String nroBoleta;
 
     private String concepto;
 }

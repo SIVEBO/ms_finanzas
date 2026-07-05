@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "caja_sucursal", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"id_sucursal"})
+    @UniqueConstraint(columnNames = {"nombre_sucursal"})
 })
 public class CajaSucursal {
 
@@ -29,8 +29,8 @@ public class CajaSucursal {
     @Column(name = "id_caja")
     private Long idCaja;
 
-    @Column(name = "id_sucursal", nullable = false)
-    private Long idSucursal;
+    @Column(name = "nombre_sucursal", nullable = false)
+    private String nombreSucursal;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_actual", nullable = false, length = 20)

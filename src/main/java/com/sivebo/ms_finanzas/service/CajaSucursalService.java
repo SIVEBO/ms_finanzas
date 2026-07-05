@@ -26,18 +26,18 @@ public class CajaSucursalService {
 
     
     public CajaSucursalResponse crear(CajaSucursalRequest request) {
-        log.info("Creando caja para sucursal id: {}", request.getIdSucursal());
-        if (repository.findByIdSucursal(request.getIdSucursal()).isPresent()) {
+        log.info("Creando caja para sucursal: {}", request.getNombreSucursal());
+        if (repository.findByNombreSucursal(request.getNombreSucursal()).isPresent()) {
             throw new ReglaNegocioException(
-                    "Ya existe una caja para la sucursal: " + request.getIdSucursal());
+                    "Ya existe una caja para la sucursal: " + request.getNombreSucursal());
         }
         CajaSucursal caja = new CajaSucursal();
-        caja.setIdSucursal(request.getIdSucursal());
+        caja.setNombreSucursal(request.getNombreSucursal());
         caja.setEstadoActual(request.getEstadoActual());
         return toResponse(repository.save(caja));
     }
 
-    
+
     public CajaSucursalResponse obtenerPorId(Long id) {
         log.info("Buscando caja id: {}", id);
         CajaSucursal caja = repository.findById(id)
@@ -45,11 +45,11 @@ public class CajaSucursalService {
         return toResponse(caja);
     }
 
-    
-    public CajaSucursalResponse obtenerPorSucursal(Long idSucursal) {
-        log.info("Buscando caja de sucursal id: {}", idSucursal);
-        CajaSucursal caja = repository.findByIdSucursal(idSucursal)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada para sucursal: " + idSucursal));
+
+    public CajaSucursalResponse obtenerPorSucursal(String nombreSucursal) {
+        log.info("Buscando caja de sucursal: {}", nombreSucursal);
+        CajaSucursal caja = repository.findByNombreSucursal(nombreSucursal)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Caja no encontrada para sucursal: " + nombreSucursal));
         return toResponse(caja);
     }
 
@@ -71,7 +71,7 @@ public class CajaSucursalService {
     private CajaSucursalResponse toResponse(CajaSucursal caja) {
         CajaSucursalResponse response = new CajaSucursalResponse();
         response.setIdCaja(caja.getIdCaja());
-        response.setIdSucursal(caja.getIdSucursal());
+        response.setNombreSucursal(caja.getNombreSucursal());
         response.setEstadoActual(caja.getEstadoActual().name());
         return response;
     }

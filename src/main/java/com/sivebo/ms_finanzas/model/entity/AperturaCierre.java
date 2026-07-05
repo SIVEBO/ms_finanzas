@@ -8,9 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "apertura_cierre")
+@Table(name = "apertura_cierre", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"cod_sesion"})
+})
 public class AperturaCierre {
 
     @Id
@@ -27,12 +28,14 @@ public class AperturaCierre {
     @Column(name = "id_sesion")
     private Long idSesion;
 
-    @ManyToOne
-    @JoinColumn(name = "id_caja", nullable = false)
-    private CajaSucursal caja;
+    @Column(name = "cod_sesion", nullable = false, unique = true)
+    private String codSesion;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Long idUsuario;
+    @Column(name = "nombre_sucursal", nullable = false)
+    private String nombreSucursal;
+
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "monto_apertura", nullable = false)
     private BigDecimal montoApertura;
@@ -40,9 +43,9 @@ public class AperturaCierre {
     @Column(name = "monto_cierre")
     private BigDecimal montoCierre;
 
-    @Column(name = "fecha_hora_apertura", nullable = false)
-    private LocalDateTime fechaHoraApertura;
+    @Column(name = "fecha_hora_ap", nullable = false)
+    private LocalDateTime fechaHoraAp;
 
-    @Column(name = "fecha_hora_cierre")
-    private LocalDateTime fechaHoraCierre;
+    @Column(name = "fecha_hora_ci")
+    private LocalDateTime fechaHoraCi;
 }

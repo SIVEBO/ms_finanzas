@@ -9,7 +9,9 @@ import com.sivebo.ms_finanzas.model.entity.AperturaCierre;
 
 public interface AperturaCierreRepository extends JpaRepository<AperturaCierre, Long> {
 
-    List<AperturaCierre> findByCajaIdCaja(Long idCaja);
+    List<AperturaCierre> findByNombreSucursal(String nombreSucursal);
 
-    Optional<AperturaCierre> findByCajaIdCajaAndFechaHoraCierreIsNull(Long idCaja);
+    Optional<AperturaCierre> findByNombreSucursalAndFechaHoraCiIsNull(String nombreSucursal);
+
+    Optional<AperturaCierre> findByCodSesion(String codSesion);
 }

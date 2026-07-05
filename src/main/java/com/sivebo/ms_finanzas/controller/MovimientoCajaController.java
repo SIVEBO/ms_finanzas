@@ -44,15 +44,15 @@ public class MovimientoCajaController {
 
     @Operation(summary = "Listar movimientos de una sesión")
     @ApiResponse(responseCode = "200", description = "Lista de movimientos de la sesión")
-    @GetMapping("/sesion/{idSesion}")
-    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesion(@PathVariable Long idSesion) {
-        return ResponseEntity.ok(service.listarPorSesion(idSesion));
+    @GetMapping("/sesion/{codSesion}")
+    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesion(@PathVariable String codSesion) {
+        return ResponseEntity.ok(service.listarPorSesion(codSesion));
     }
 
     @Operation(summary = "Listar movimientos por tipo", description = "Filtra movimientos de una sesión por INGRESO o EGRESO")
     @ApiResponse(responseCode = "200", description = "Lista filtrada por tipo")
-    @GetMapping("/sesion/{idSesion}/tipo")
-    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesionYTipo(@PathVariable Long idSesion, @RequestParam TipoMovimiento tipo) {
-        return ResponseEntity.ok(service.listarPorSesionYTipo(idSesion, tipo));
+    @GetMapping("/sesion/{codSesion}/tipo")
+    public ResponseEntity<List<MovimientoCajaResponse>> listarPorSesionYTipo(@PathVariable String codSesion, @RequestParam TipoMovimiento tipo) {
+        return ResponseEntity.ok(service.listarPorSesionYTipo(codSesion, tipo));
     }
 }

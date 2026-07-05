@@ -65,9 +65,9 @@ public class CajaSucursalController {
         @ApiResponse(responseCode = "200", description = "Caja de la sucursal encontrada"),
         @ApiResponse(responseCode = "404", description = "Sucursal sin caja asignada")
     })
-    @GetMapping("/sucursal/{idSucursal}")
-    public ResponseEntity<CajaSucursalResponse> obtenerPorSucursal(@PathVariable Long idSucursal) {
-        return ResponseEntity.ok(service.obtenerPorSucursal(idSucursal));
+    @GetMapping("/sucursal/{nombreSucursal}")
+    public ResponseEntity<CajaSucursalResponse> obtenerPorSucursal(@PathVariable String nombreSucursal) {
+        return ResponseEntity.ok(service.obtenerPorSucursal(nombreSucursal));
     }
 
     @Operation(summary = "Actualizar estado de caja")

@@ -15,11 +15,11 @@ public class FinanzasClient {
         this.webClient = builder.baseUrl("http://ms-ventas").build();
     }
 
-    public Boolean verificarVenta(Long idVenta) {
-        log.info("Consultando venta id: {} en ms-ventas", idVenta);
+    public Boolean verificarVenta(String nroBoleta) {
+        log.info("Consultando venta nroBoleta: {} en ms-ventas", nroBoleta);
         try {
             webClient.get()
-                    .uri("/api/v1/ventas/{id}", idVenta)
+                    .uri("/api/v1/ventas/buscar?nroBoleta={nroBoleta}", nroBoleta)
                     .retrieve()
                     .bodyToMono(Object.class)
                     .block();

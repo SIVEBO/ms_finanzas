@@ -31,42 +31,42 @@ public class MovimientoCajaService {
 
 
     public MovimientoCajaResponse registrar(MovimientoCajaRequest request) {
-        log.info("Registrando movimiento tipo: {} en sesión id: {}", request.getTipo(), request.getIdSesion());
-        AperturaCierre sesion = aperturaCierreRepository.findById(request.getIdSesion())
+        log.info("Registrando movimiento tipo: {} en sesión: {}", request.getTipo(), request.getCodSesion());
+        AperturaCierre sesion = aperturaCierreRepository.findByCodSesion(request.getCodSesion())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
 
-        if (request.getIdVenta() != null && !finanzasClient.verificarVenta(request.getIdVenta())) {
+        if (request.getNroBoleta() != null && !finanzasClient.verificarVenta(request.getNroBoleta())) {
             throw new ReglaNegocioException("La venta indicada no existe en el sistema");
         }
 
         MovimientoCaja mov = new MovimientoCaja();
-        mov.setSesion(sesion);
+        mov.setCodSesion(sesion.getCodSesion());
         mov.setTipo(request.getTipo());
         mov.setMonto(request.getMonto());
-        mov.setIdVenta(request.getIdVenta());
+        mov.setNroBoleta(request.getNroBoleta());
         mov.setConcepto(request.getConcepto());
         return toResponse(repository.save(mov));
     }
 
-    
-    public List<MovimientoCajaResponse> listarPorSesion(Long idSesion) {
-        log.info("Listando movimientos de sesión id: {}", idSesion);
-        return repository.findBySesionIdSesion(idSesion).stream().map(this::toResponse).collect(Collectors.toList());
+
+    public List<MovimientoCajaResponse> listarPorSesion(String codSesion) {
+        log.info("Listando movimientos de sesión: {}", codSesion);
+        return repository.findByCodSesion(codSesion).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    
-    public List<MovimientoCajaResponse> listarPorSesionYTipo(Long idSesion, TipoMovimiento tipo) {
-        log.info("Listando movimientos tipo: {} de sesión id: {}", tipo, idSesion);
-        return repository.findBySesionIdSesionAndTipo(idSesion, tipo).stream().map(this::toResponse).collect(Collectors.toList());
+
+    public List<MovimientoCajaResponse> listarPorSesionYTipo(String codSesion, TipoMovimiento tipo) {
+        log.info("Listando movimientos tipo: {} de sesión: {}", tipo, codSesion);
+        return repository.findByCodSesionAndTipo(codSesion, tipo).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     private MovimientoCajaResponse toResponse(MovimientoCaja m) {
         MovimientoCajaResponse r = new MovimientoCajaResponse();
-        r.setIdMovimiento(m.getIdMovimiento());
-        r.setIdSesion(m.getSesion().getIdSesion());
+        r.setIdMov(m.getIdMov());
+        r.setCodSesion(m.getCodSesion());
         r.setTipo(m.getTipo().name());
         r.setMonto(m.getMonto());
-        r.setIdVenta(m.getIdVenta());
+        r.setNroBoleta(m.getNroBoleta());
         r.setConcepto(m.getConcepto());
         return r;
     }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class CajaSucursalResponse {
     
     private Long idCaja;
-    private Long idSucursal;
+    private String nombreSucursal;
     private String estadoActual;
 }

@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 public class AperturaCierreResponse {
     
     private Long idSesion;
-    private Long idCaja;
-    private Long idUsuario;
-    private LocalDateTime fechaHoraApertura;
-    private LocalDateTime fechaHoraCierre;
+    private String codSesion;
+    private String nombreSucursal;
+    private String username;
+    private LocalDateTime fechaHoraAp;
+    private LocalDateTime fechaHoraCi;
     private BigDecimal montoApertura;
     private BigDecimal montoCierre;
     private BigDecimal saldoCalculado;

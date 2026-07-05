@@ -11,8 +11,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,12 +25,11 @@ public class MovimientoCaja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_movimiento")
-    private Long idMovimiento;
+    @Column(name = "id_mov")
+    private Long idMov;
 
-    @ManyToOne
-    @JoinColumn(name = "id_sesion", nullable = false)
-    private AperturaCierre sesion;
+    @Column(name = "cod_sesion", nullable = false)
+    private String codSesion;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 10)
@@ -41,8 +38,8 @@ public class MovimientoCaja {
     @Column(name = "monto", nullable = false)
     private BigDecimal monto;
 
-    @Column(name = "id_venta")
-    private Long idVenta;
+    @Column(name = "nro_boleta")
+    private String nroBoleta;
 
     @Column(name = "concepto", length = 255)
     private String concepto;

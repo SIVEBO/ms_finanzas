@@ -8,6 +8,6 @@ import com.sivebo.ms_finanzas.model.entity.MovimientoCaja;
 import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
 
 public interface MovimientoCajaRepository extends JpaRepository<MovimientoCaja, Long> {
-    List<MovimientoCaja> findBySesionIdSesion(Long idSesion);
-    List<MovimientoCaja> findBySesionIdSesionAndTipo(Long idSesion, TipoMovimiento tipo);
+    List<MovimientoCaja> findByCodSesion(String codSesion);
+    List<MovimientoCaja> findByCodSesionAndTipo(String codSesion, TipoMovimiento tipo);
 }

@@ -27,17 +27,17 @@ class CajaSucursalServiceTest {
 
     @InjectMocks CajaSucursalService service;
 
-    private static final CajaSucursal CAJA = new CajaSucursal(1L, 10L, EstadoCaja.CERRADA);
+    private static final CajaSucursal CAJA = new CajaSucursal(1L, "Sucursal Centro", EstadoCaja.CERRADA);
 
     @Test
     void crearRequestValidoGuardaYRetornaResponse() {
-        CajaSucursalRequest request = new CajaSucursalRequest(10L, EstadoCaja.CERRADA);
+        CajaSucursalRequest request = new CajaSucursalRequest("Sucursal Centro", EstadoCaja.CERRADA);
         when(repository.save(any(CajaSucursal.class))).thenReturn(CAJA);
 
         CajaSucursalResponse result = service.crear(request);
 
         assertEquals(1L, result.getIdCaja());
-        assertEquals(10L, result.getIdSucursal());
+        assertEquals("Sucursal Centro", result.getNombreSucursal());
         assertEquals("CERRADA", result.getEstadoActual());
         verify(repository).save(any(CajaSucursal.class));
     }
@@ -49,7 +49,7 @@ class CajaSucursalServiceTest {
         CajaSucursalResponse result = service.obtenerPorId(1L);
 
         assertEquals(1L, result.getIdCaja());
-        assertEquals(10L, result.getIdSucursal());
+        assertEquals("Sucursal Centro", result.getNombreSucursal());
     }
 
     @Test
@@ -61,24 +61,24 @@ class CajaSucursalServiceTest {
 
     @Test
     void obtenerPorSucursalEncontradaRetornaResponse() {
-        when(repository.findByIdSucursal(10L)).thenReturn(Optional.of(CAJA));
+        when(repository.findByNombreSucursal("Sucursal Centro")).thenReturn(Optional.of(CAJA));
 
-        CajaSucursalResponse result = service.obtenerPorSucursal(10L);
+        CajaSucursalResponse result = service.obtenerPorSucursal("Sucursal Centro");
 
         assertEquals(1L, result.getIdCaja());
-        assertEquals(10L, result.getIdSucursal());
+        assertEquals("Sucursal Centro", result.getNombreSucursal());
     }
 
     @Test
     void obtenerPorSucursalNoExisteLanzaRecursoNoEncontrado() {
-        when(repository.findByIdSucursal(99L)).thenReturn(Optional.empty());
+        when(repository.findByNombreSucursal("Sucursal Inexistente")).thenReturn(Optional.empty());
 
-        assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorSucursal(99L));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.obtenerPorSucursal("Sucursal Inexistente"));
     }
 
     @Test
     void listarTodasRetornaTodasLasCajas() {
-        CajaSucursal caja2 = new CajaSucursal(2L, 20L, EstadoCaja.ABIERTA);
+        CajaSucursal caja2 = new CajaSucursal(2L, "Sucursal Norte", EstadoCaja.ABIERTA);
         when(repository.findAll()).thenReturn(List.of(CAJA, caja2));
 
         List<CajaSucursalResponse> result = service.listarTodas();
@@ -90,8 +90,8 @@ class CajaSucursalServiceTest {
 
     @Test
     void actualizarEstadoEncontradaActualizaYRetornaResponse() {
-        CajaSucursal cajaActualizada = new CajaSucursal(1L, 10L, EstadoCaja.ABIERTA);
-        when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, 10L, EstadoCaja.CERRADA)));
+        CajaSucursal cajaActualizada = new CajaSucursal(1L, "Sucursal Centro", EstadoCaja.ABIERTA);
+        when(repository.findById(1L)).thenReturn(Optional.of(new CajaSucursal(1L, "Sucursal Centro", EstadoCaja.CERRADA)));
         when(repository.save(any(CajaSucursal.class))).thenReturn(cajaActualizada);
 
         CajaSucursalResponse result = service.actualizarEstado(1L, EstadoCaja.ABIERTA);

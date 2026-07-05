@@ -66,9 +66,9 @@ public class AperturaCierreController {
 
     @Operation(summary = "Listar sesiones de una caja")
     @ApiResponse(responseCode = "200", description = "Historial de sesiones")
-    @GetMapping("/caja/{idCaja}")
-    public ResponseEntity<List<AperturaCierreResponse>> listarPorCaja(@PathVariable Long idCaja) {
-        return ResponseEntity.ok(service.listarPorCaja(idCaja));
+    @GetMapping("/caja/{nombreSucursal}")
+    public ResponseEntity<List<AperturaCierreResponse>> listarPorCaja(@PathVariable String nombreSucursal) {
+        return ResponseEntity.ok(service.listarPorCaja(nombreSucursal));
     }
 
     @Operation(summary = "Obtener sesión actualmente abierta")
@@ -76,9 +76,9 @@ public class AperturaCierreController {
         @ApiResponse(responseCode = "200", description = "Sesión abierta encontrada"),
         @ApiResponse(responseCode = "404", description = "No hay sesión abierta para esta caja")
     })
-    @GetMapping("/caja/{idCaja}/abierta")
-    public ResponseEntity<AperturaCierreResponse> obtenerSesionAbierta(@PathVariable Long idCaja) {
-        return ResponseEntity.ok(service.obtenerSesionAbierta(idCaja));
+    @GetMapping("/caja/{nombreSucursal}/abierta")
+    public ResponseEntity<AperturaCierreResponse> obtenerSesionAbierta(@PathVariable String nombreSucursal) {
+        return ResponseEntity.ok(service.obtenerSesionAbierta(nombreSucursal));
     }
 
     @Operation(summary = "Generar reporte de cierre", description = "reporte con ingresos, egresos y diferencia de cuadre")
