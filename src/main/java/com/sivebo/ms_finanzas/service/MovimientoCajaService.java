@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.sivebo.ms_finanzas.client.FinanzasClient;
 import com.sivebo.ms_finanzas.dto.request.MovimientoCajaRequest;
 import com.sivebo.ms_finanzas.dto.response.MovimientoCajaResponse;
 import com.sivebo.ms_finanzas.exception.RecursoNoEncontradoException;
+import com.sivebo.ms_finanzas.exception.ReglaNegocioException;
 import com.sivebo.ms_finanzas.model.entity.AperturaCierre;
 import com.sivebo.ms_finanzas.model.entity.MovimientoCaja;
 import com.sivebo.ms_finanzas.model.enums.TipoMovimiento;
@@ -25,12 +27,18 @@ public class MovimientoCajaService {
 
     private final MovimientoCajaRepository repository;
     private final AperturaCierreRepository aperturaCierreRepository;
+    private final FinanzasClient finanzasClient;
 
-    
+
     public MovimientoCajaResponse registrar(MovimientoCajaRequest request) {
         log.info("Registrando movimiento tipo: {} en sesión id: {}", request.getTipo(), request.getIdSesion());
         AperturaCierre sesion = aperturaCierreRepository.findById(request.getIdSesion())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Sesión no encontrada"));
+
+        if (request.getIdVenta() != null && !finanzasClient.verificarVenta(request.getIdVenta())) {
+            throw new ReglaNegocioException("La venta indicada no existe en el sistema");
+        }
+
         MovimientoCaja mov = new MovimientoCaja();
         mov.setSesion(sesion);
         mov.setTipo(request.getTipo());

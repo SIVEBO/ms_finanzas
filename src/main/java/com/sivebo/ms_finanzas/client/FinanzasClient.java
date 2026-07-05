@@ -18,11 +18,12 @@ public class FinanzasClient {
     public Boolean verificarVenta(Long idVenta) {
         log.info("Consultando venta id: {} en ms-ventas", idVenta);
         try {
-            return webClient.get()
-                    .uri("/api/ventas/{id}/existe", idVenta)
+            webClient.get()
+                    .uri("/api/v1/ventas/{id}", idVenta)
                     .retrieve()
-                    .bodyToMono(Boolean.class)
+                    .bodyToMono(Object.class)
                     .block();
+            return true;
         } catch (Exception e) {
             log.error("Error al consultar ms-ventas: {}", e.getMessage());
             return false;

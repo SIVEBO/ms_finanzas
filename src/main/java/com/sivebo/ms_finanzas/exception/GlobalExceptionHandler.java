@@ -40,4 +40,12 @@ public class GlobalExceptionHandler {
                 .forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
+        log.error("Error no controlado: {}", ex.getMessage(), ex);
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Error interno del servidor");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
 }
